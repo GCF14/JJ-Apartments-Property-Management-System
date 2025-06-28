@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
 import com.jjapartments.backend.models.User;
-
+import com.jjapartments.backend.mappers.UserRowMapper;
 
 @Repository
 public class UserRepository{
@@ -22,37 +22,41 @@ public class UserRepository{
 
     public boolean userExists(User user) {
     String sqlChecker = "SELECT COUNT(*) FROM users WHERE username = ?";
-    int count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getName());
-    return count > 0;
+    Integer count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getUsername());
+    return count != null && count > 0;
     }   
 
-    public boolean idExists(User user) {
-    String sqlChecker = "SELECT COUNT(*) FROM users WHERE id = ?";
-    int count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getId());
-    return count > 0;
-    } 
+    // no need for this since id is auto increment (?)
+    // public boolean idExists(User user) {
+    // String sqlChecker = "SELECT COUNT(*) FROM users WHERE id = ?";
+    // Integer count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getId());
+    // return count != null && count > 0;
+    // } 
 
     public boolean emailExists(User user) {
-    String sqlChecker = "SELECT COUNT(*) FROM users WHERE id = ?";
-    int count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getId());
-    return count > 0;
+    String sqlChecker = "SELECT COUNT(*) FROM users WHERE email = ?";
+    Integer count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getId());
+    return count != null && count > 0;
     } 
 
     public int add(User user) {
-        String sqlChecker = "SELECT COUNT(*) FROM users WHERE id = ? AND username = ? AND email = ?";
-        int count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getId(), user.getName(), user.getEmail());
+        String sqlChecker = "SELECT COUNT(*) FROM users WHERE username = ? OR email = ?";
+        Integer count = jdbcTemplate.queryForObject(sqlChecker, Integer.class, user.getId(), user.getUsername(), user.getEmail());
 
-        if(count == 0){
-            String sql = "INSERT INTO users(id, username, password, email, created_at) VALUES (?, ?, ?, ?)";
-            return jdbcTemplate.update(sql, stock.getName(), stock.getPrice(), stock.getManufacturingDate(), stock.getWarranty());
-        } else if(userExists()){
-            throw new ErrorException("The username is already taken.");
-        } else if(idExists()){
-            throw new ErrorException("The id is already taken.");
-        } else if(emailExists()){
-            throw new ErrorException("The email is already taken.");
+        if(count != null && count == 0){
+            String sql = "INSERT INTO users(username, password, full_name, email, is_owner) VALUES (?, ?, ?, ?, ?)";
+            return jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getFullName(), user.getEmail(), user.getIsOwner());
+        } else if(userExists(user)){
+            throw new IllegalArgumentException("The username is already taken.");
+        } else if(emailExists(user)){
+            throw new IllegalArgumentException("The email is already taken.");
         } else {
-            throw new ErrorException("The user is already registered.");
+            throw new IllegalArgumentException("The user is already registered.");
         }
+    }
+
+    public int delete(User user) {
+        String sql = "DELETE FROM users WHERE id = ?";
+        return jdbcTemplate.update(sql, user.getId());
     }
 }
