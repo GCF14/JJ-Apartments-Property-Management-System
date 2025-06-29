@@ -6,7 +6,7 @@ public class Payment {
     private int tenantId;
     private String reason;
     private String modeOfPayment;
-    private double amount;
+    private float amount;
     private String dueDate;
     private String monthOfStart;
     private String monthOfEnd;
@@ -49,11 +49,11 @@ public class Payment {
         this.modeOfPayment = modeOfPayment;
     }
 
-    public double getAmount() {
+    public float getAmount() {
         return this.amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 

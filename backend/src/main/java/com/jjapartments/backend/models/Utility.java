@@ -1,13 +1,13 @@
 package com.jjapartments.backend.models;
 
-public class Utilities {
+public class Utility {
 
     private int id;
     private String type;
-    private double previousReading;
-    private double currentReading;
-    private double totalMeter;
-    private double totalAmount;
+    private float previousReading;
+    private float currentReading;
+    private float totalMeter;
+    private float totalAmount;
     private String dueDate;
     private String monthOfStart;
     private String monthOfEnd;
@@ -33,35 +33,35 @@ public class Utilities {
         this.type = type;
     }
 
-    public double getPreviousReading() {
+    public float getPreviousReading() {
         return this.previousReading;
     }
 
-    public void setPreviousReading(double previousReading) {
+    public void setPreviousReading(float previousReading) {
         this.previousReading = previousReading;
     }
 
-    public double getCurrentReading() {
+    public float getCurrentReading() {
         return this.currentReading;
     }
 
-    public void setCurrentReading(double currentReading) {
+    public void setCurrentReading(float currentReading) {
         this.currentReading = currentReading;
     }
 
-    public double getTotalMeter() {
+    public float getTotalMeter() {
         return this.totalMeter;
     }
 
-    public void setTotalMeter(double totalMeter) {
+    public void setTotalMeter(float totalMeter) {
         this.totalMeter = totalMeter;
     }
 
-    public double getTotalAmount() {
+    public float getTotalAmount() {
         return this.totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(float totalAmount) {
         this.totalAmount = totalAmount;
     }
 

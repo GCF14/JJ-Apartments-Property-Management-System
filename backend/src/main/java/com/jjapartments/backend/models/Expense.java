@@ -3,8 +3,8 @@ package com.jjapartments.backend.models;
 public class Expense {
 
     private int id;
-    private double amount;
-    private String[] reason;
+    private float amount;
+    private String reason;
     private String date;
 
     public int getId() {
@@ -15,19 +15,19 @@ public class Expense {
         this.id = id;
     }
 
-    public double getAmount() {
+    public float getAmount() {
         return this.amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
-    public String[] getReason() {
+    public String getReason() {
         return this.reason;
     }
 
-    public void setReason(String[] reason) {
+    public void setReason(String reason) {
         this.reason = reason;
     }
 

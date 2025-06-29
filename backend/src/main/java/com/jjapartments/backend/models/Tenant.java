@@ -6,7 +6,7 @@ public class Tenant {
     private String lastName;
     private String firstName;
     private String middleInitial;
-    private String unit;
+    private int unit;
     private String email;
     private String phoneNumber;
        
@@ -42,11 +42,11 @@ public class Tenant {
         this.middleInitial = middleInitial;
     }
 
-    public String getUnit() {
+    public int getUnit() {
         return unit;
     }
 
-    public void setUnit(String unit) {
+    public void setUnit(int unit) {
         this.unit = unit;
     }
 

@@ -4,7 +4,8 @@ public class Rate {
     
     private int id;
     private String type;
-    private double rate;
+    private float rate;
+    private String date;
 
     public int getId() {
         return this.id;
@@ -22,12 +23,20 @@ public class Rate {
         this.type = type;
     }
 
-    public double getRate() {
+    public float getRate() {
         return this.rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(float rate) {
         this.rate = rate;
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
 }
