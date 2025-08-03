@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import {DatePicker} from "@/components/date-picker"
 import { Payment } from "./payments-list";
+import { ErrorModal } from "@/components/error-modal";
 interface Props {
   setPayment:  React.Dispatch<React.SetStateAction<Payment[]>>;
 }
@@ -31,6 +32,7 @@ export default function AddPaymentButton({setPayment}: Props) {
     const [monthOfStart, setMonthOfStart] = useState<Date | undefined>(undefined);
     const [monthOfEnd, setMonthOfEnd] = useState<Date | undefined>(undefined);
     const [units, setUnits] = useState<Unit[]>([]);
+    const [localError, setLocalError] = useState<string | null>(null);
     const modeOptions = ["Cash", "GCash", "Bank Transfer", "Online Payment", "Other"];
     useEffect(() => {
         const fetchUnits = async () => {
@@ -47,6 +49,17 @@ export default function AddPaymentButton({setPayment}: Props) {
     const handleSubmit = async(e: React.MouseEvent ) => {
         e.preventDefault();
         e.stopPropagation();
+        if (
+          !unitId ||
+          !modeOfPayment ||
+          !amount ||
+          !dueDate ||
+          !monthOfStart ||
+          !monthOfEnd
+        ) {
+          setLocalError("Please fill out all required fields");
+          return;
+        }
 
         const body = {
             unitId,
@@ -63,10 +76,11 @@ export default function AddPaymentButton({setPayment}: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-
+      
       if (!res.ok) {
         throw new Error("Failed to create payment record");
       }
+      setLocalError(null);
 
       setIsOpen(false);
       const saved = await res.json();
@@ -80,7 +94,20 @@ export default function AddPaymentButton({setPayment}: Props) {
 
     return (
     <>
-        <Button onClick={() => setIsOpen(true)}>
+        <ErrorModal
+            open={!!localError}
+            message={localError || ""}
+            onClose={() => setLocalError(null)}
+          />
+        <Button onClick={() => {setIsOpen(true);
+                                setUnitId(0);
+                                setModeOfPayment("");
+                                setAmount("");
+                                setDueDate(undefined);
+                                setMonthOfStart(undefined);
+                                setMonthOfEnd(undefined);
+                                setLocalError(null);}}>
+          
             Add
         </Button>
 
@@ -91,9 +118,9 @@ export default function AddPaymentButton({setPayment}: Props) {
               <CardTitle>Add Payment Record</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="py-1 text-sm text-gray-900">
-                Unit <span className="text-red-500">*</span>
-                <Select onValueChange={(value) => setUnitId(Number(value))}>
+                <div className="py-1 text-sm text-gray-900">
+                    Unit
+                    <Select onValueChange={(value) => setUnitId(Number(value))}>
                         <SelectTrigger className="w-full h-11 rounded-md border px-3 text-left">
                             <SelectValue placeholder="Select Unit" />
                         </SelectTrigger>
@@ -108,7 +135,7 @@ export default function AddPaymentButton({setPayment}: Props) {
                 </div>
 
                 <div className="py-1 text-sm text-gray-900">
-                    Mode Of Payment <span className="text-red-500">*</span>
+                    Mode Of Payment
                     <Select onValueChange={(value) => setModeOfPayment(value)}>
                         <SelectTrigger className="w-full h-11 rounded-md border px-3 text-left">
                             <SelectValue placeholder="Select Mode of Payment" />
@@ -127,32 +154,34 @@ export default function AddPaymentButton({setPayment}: Props) {
                 
                
                 <div className="py-1 text-sm text-gray-900">
-                  Amount <span className="text-red-500">*</span>
-                  <Input
-                    type="number"
-                    placeholder="Amount"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                  />
+                    Amount
+                    <Input
+                        type="number"
+                        placeholder="Amount"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                    />
                 </div>
 
                 <div className="py-1 text-sm text-gray-900">
-                  Due Date <span className="text-red-500">*</span>
-                  <DatePicker date={dueDate} setDate={setDueDate}/>
+                    Due Date
+                    <DatePicker date={dueDate} setDate={setDueDate}/>
                 </div>
-
+                            
                 <div className="grid gap-4 py-1">
-                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                     <div className="py-1 text-sm text-gray-900">
-                      Month Of Start <span className="text-red-500">*</span>
-                      <DatePicker date={monthOfStart} setDate={setMonthOfStart}/>
+                            Month Of Start
+                            <DatePicker date={monthOfStart} setDate={setMonthOfStart}/>
+                        </div>
+
+                        <div className="py-1 text-sm text-gray-900">
+                            Month Of End
+                            <DatePicker date={monthOfEnd} setDate={setMonthOfEnd}/>
+                        </div>
                     </div>
-                    <div className="py-1 text-sm text-gray-900">
-                      Month Of End <span className="text-red-500">*</span>
-                      <DatePicker date={monthOfEnd} setDate={setMonthOfEnd}/>
-                    </div>
-                  </div>
                 </div>
+              
             </CardContent>
 
             <CardFooter className="flex justify-between">
