@@ -12,26 +12,26 @@ import org.springframework.http.HttpStatus;
 import com.jjapartments.backend.models.Unit;
 import com.jjapartments.backend.repository.UnitRepository;
 import com.jjapartments.backend.exception.ErrorException;
+
 @RestController
 @RequestMapping("/api/units")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UnitController {
 
     @Autowired
     private UnitRepository unitRepository;
 
-    //Create
+    // Create
     @PostMapping("/add")
     public ResponseEntity<?> addUnit(@RequestBody Unit unit) {
         try {
             Unit newUnit = unitRepository.add(unit);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUnit);
-        } catch(ErrorException e) {
+        } catch (ErrorException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 
-    //Get all
+    // Get all
     @GetMapping
     public ResponseEntity<List<Unit>> getAllUnits() {
         List<Unit> units = unitRepository.findAll();
@@ -59,12 +59,13 @@ public class UnitController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
+
     // Search
     @GetMapping("/search")
-    public List<Unit> searchUnits(@RequestParam("q") String query){
+    public List<Unit> searchUnits(@RequestParam("q") String query) {
         return unitRepository.searchByKeyword(query);
     }
-    
+
     @GetMapping("/findUnitId")
     public ResponseEntity<Integer> findUnitId(
             @RequestParam("name") String name,
@@ -72,9 +73,9 @@ public class UnitController {
         Optional<Unit> unitOptional = unitRepository.findByNameAndUnitNumber(name, unitNumber);
 
         if (unitOptional.isPresent()) {
-            return ResponseEntity.ok(unitOptional.get().getId()); 
+            return ResponseEntity.ok(unitOptional.get().getId());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); 
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

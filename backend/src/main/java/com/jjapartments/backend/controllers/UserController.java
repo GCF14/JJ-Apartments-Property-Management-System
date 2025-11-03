@@ -1,6 +1,5 @@
 package com.jjapartments.backend.controllers;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -11,26 +10,26 @@ import com.jjapartments.backend.models.User;
 import com.jjapartments.backend.exception.ErrorException;
 import com.jjapartments.backend.repository.UserRepository;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // Create
     @PostMapping("/add")
-    public ResponseEntity<String> addUser(@RequestBody User user) {        
+    public ResponseEntity<String> addUser(@RequestBody User user) {
         try { // returns 201 created
-            // Hash the password before saving
+              // Hash the password before saving
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.add(user);
             return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
-        } catch(ErrorException e) { // returns 400 bad request
+        } catch (ErrorException e) { // returns 400 bad request
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -46,7 +45,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable int id) {
         User user = userRepository.findById(id);
-        return user!= null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
+        return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
     // Delete
@@ -70,27 +69,31 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    
+
     // Add login endpoint
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
             User existingUser = userRepository.findByUsername(user.getUsername());
-            if (existingUser != null) {
-                if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
-                    // Don't return the password in the response
-                    existingUser.setPassword(null);
-                    return ResponseEntity.ok(existingUser);
-                } else {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password. Please check your password and try again.");
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found. Please check your username or create a new account.");
+
+            if (existingUser == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "ACCOUNT_NOT_FOUND"));
             }
+
+            if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "INVALID_PASSWORD"));
+            }
+
+            // Success: remove password before sending
+            existingUser.setPassword(null);
+            return ResponseEntity.ok(existingUser);
+
         } catch (ErrorException e) {
             // This catches the "User with username X not found" from repository
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found. Please check your username or create a new account.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "ACCOUNT_NOT_FOUND"));
         }
     }
-
 }

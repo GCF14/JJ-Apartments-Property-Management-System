@@ -1,3 +1,15 @@
+#!/bin/sh
+FILE="backend/src/main/resources/application.properties"
+
+if git diff --cached --name-only | grep -q "$FILE"; then
+  echo ""
+  echo "⚠️  SECURITY NOTICE ⚠️"
+  echo "For security, your changes to application.properties will NOT be committed."
+  echo "Your local changes still exist, but the safe template will be pushed instead."
+  echo ""
+
+  # Restore the template into the staged version
+  cat > "$FILE" <<'EOF'
 # Database driver
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
@@ -25,3 +37,10 @@ logging.level.org.hibernate.SQL=DEBUG
 
 # Server port
 server.port=${PORT:8080}
+EOF
+
+  # Re-stage the safe template
+  git add "$FILE"
+
+  echo "✅ application.properties has been reset to the safe template in your commit."
+fi

@@ -1,6 +1,5 @@
 package com.jjapartments.backend.controllers;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +11,14 @@ import org.springframework.http.ResponseEntity;
 import com.jjapartments.backend.models.Payment;
 import com.jjapartments.backend.repository.PaymentRepository;
 import com.jjapartments.backend.exception.ErrorException;
+
 @RestController
 @RequestMapping("/api/payments")
-@CrossOrigin(origins = "http://localhost:3000")
 public class PaymentController {
     @Autowired
     private PaymentRepository paymentRepository;
 
-    //Create
+    // Create
     @PostMapping("/add")
     public ResponseEntity<?> addPayment(@RequestBody Payment payment) {
         try {
@@ -30,7 +29,7 @@ public class PaymentController {
         }
     }
 
-    //Get all
+    // Get all
     @GetMapping
     public ResponseEntity<List<Payment>> getAllPayments() {
         List<Payment> payments = paymentRepository.findAll();
@@ -58,9 +57,11 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
+
     // Find by year and month
     @GetMapping("/{id}/{year}/{month}")
-    public ResponseEntity<Float> findByYearAndMonth(@PathVariable int id, @PathVariable int year, @PathVariable int month) {
+    public ResponseEntity<Float> findByYearAndMonth(@PathVariable int id, @PathVariable int year,
+            @PathVariable int month) {
         float amount = paymentRepository.getMonthlyAmountByUnitId(id, year, month);
         return ResponseEntity.ok(amount);
     }

@@ -1,5 +1,10 @@
 # JJ-Apartments-Property-Management-System
 ![image-alt](https://github.com/GCF14/JJ-Apartments-Property-Management-System/blob/8c1e7c37f5eed204fd75352ab500267741b0797e/%5B3%5D%20JJ%20Apartments%20Logo.png)
+> **Note:** This is a fork of the original repository. This version extends and improves upon the original system with additional features and enhancements.
+
+## Live Demo
+The system is deployed and available here:  
+**[https://jj-apartments.vercel.app/](https://jj-apartments.vercel.app/)**
 
 ## Description
 This is a property management system designed for JJ Apartments, to help them streamline and digitize the way they manage their properties. The system aims to provide a comprehensive solution for tracking and managing various aspects of apartment rental and maintenance operations for their business.
@@ -31,31 +36,22 @@ Before running the application, make sure you have the following installed:
    cd backend
    ```
 
-2. Make sure you have Java 21 installed:
-   ```bash
-   java -version
-   ```
-
-3. Update the database configuration in `src/main/resources/application.properties` with your MySQL credentials:
+2. Update the database configuration in `src/main/resources/application.properties` with your MySQL credentials:
    ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/your_database_name
    spring.datasource.username=your_username
    spring.datasource.password=your_password
    ```
 
-4. Run the backend application:
-   - **Option 1:** Using your IDE (recommended)
-     - Open the project in your preferred IDE (IntelliJ IDEA, Eclipse, VS Code)
-     - Navigate to `src/main/java/com/jjapartments/backend/BackendApplication.java`
-     - Right-click and select "Run Java" or use the run button
-   
-   - **Option 2:** Using command line
+3. Run the backend application:
+   - **Using IDE** (recommended): Open `src/main/java/com/jjapartments/backend/BackendApplication.java` and run it
+   - **Using command line**:
      ```bash
      ./mvnw spring-boot:run
      ```
      (On Windows, use `mvnw.cmd spring-boot:run`)
 
-The backend will start on `http://localhost:8080`
+   The backend will start on `http://localhost:8080`
 
 ### Frontend Setup (Next.js)
 
@@ -69,29 +65,20 @@ The backend will start on `http://localhost:8080`
    npm install
    ```
 
-3. Create a `.env` file in the frontend directory:
-   ```bash
-   # Create the .env file
-   touch .env
-   ```
-   
-   Add the following content to the `.env` file:
-   ```properties
-   NEXT_PUBLIC_API_URL=http://localhost:8080
-   ```
-
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm run dev
    ```
 
-The frontend will start on `http://localhost:3000`
+   The frontend will start on `http://localhost:3000`
+
+> **Note:** The frontend is configured to connect to the backend at `http://localhost:8080` by default.
 
 ## Running the Application
 
-1. **Start the backend first** by running the `BackendApplication.java` file
-2. **Then start the frontend** by running `npm run dev` in the frontend directory
-3. Open your browser and navigate to `http://localhost:3000`
+1. **Start the backend** (from the backend directory): `./mvnw spring-boot:run`
+2. **Start the frontend** (from the frontend directory): `npm run dev`
+3. **Open your browser** and navigate to `http://localhost:3000`
 
 ## Available Scripts
 
@@ -120,6 +107,7 @@ The backend API will be available at `http://localhost:8080/api/` with the follo
 - **Port Conflicts**: Make sure ports 3000 (frontend) and 8080 (backend) are available
 - **Java Version**: Ensure you're using Java 21 for the backend
 - **Node.js Version**: Make sure you have a recent version of Node.js installed
+- **Frontend API Issues**: Ensure the backend is running on `http://localhost:8080`
 
 ## Technologies Used
 - **Frontend**: Next.js, React, TypeScript, Tailwind CSS

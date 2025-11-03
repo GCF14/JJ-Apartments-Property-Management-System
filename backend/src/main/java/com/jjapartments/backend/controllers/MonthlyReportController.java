@@ -16,9 +16,9 @@ import com.jjapartments.backend.repository.UtilityRepository;
 import com.jjapartments.backend.repository.ExpenseRepository;
 import com.jjapartments.backend.exception.ErrorException;
 import com.jjapartments.backend.models.Unit;
+
 @RestController
 @RequestMapping("/api/monthlyreports")
-@CrossOrigin(origins = "http://localhost:3000")
 public class MonthlyReportController {
 
     @Autowired
@@ -34,15 +34,14 @@ public class MonthlyReportController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addMonthlyReport(
-        @RequestParam("year") int year,
-        @RequestParam("month") int month
-    ) {
+            @RequestParam("year") int year,
+            @RequestParam("month") int month) {
         try {
             // float totalEarnings = monthlyReportRepository.sumPayments(year, month);
             // float totalExpenses = monthlyReportRepository.sumExpenses(year, month);
             // float netIncome = totalEarnings - totalExpenses;
             List<Unit> units = unitRepository.findAll();
-            for(int i = 0; i < units.size(); i++) {
+            for (int i = 0; i < units.size(); i++) {
                 int unitId = units.get(i).getId();
                 float monthlyDues = paymentRepository.getMonthlyAmountByUnitId(unitId, year, month);
                 float utilityBills = utilityRepository.getMonthlyAmountByUnitId(unitId, year, month);
@@ -56,13 +55,15 @@ public class MonthlyReportController {
                 report.setExpenses(expenses);
                 monthlyReportRepository.add(report);
             }
-            
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body("Monthly report successfully created for " + month + "/" + year);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Monthly report successfully created for " + month + "/" + year);
         } catch (DuplicateKeyException e) { // if report already exists with same month and year
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Monthly report already exists for " + month + "/" + year);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Monthly report already exists for " + month + "/" + year);
         } catch (ErrorException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Could not generate monthly report: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Could not generate monthly report: " + e.getMessage());
         }
     }
 
@@ -75,7 +76,8 @@ public class MonthlyReportController {
 
     // Delete
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteMonthlyReport(@RequestParam("year") int year, @RequestParam("month") int month) {
+    public ResponseEntity<String> deleteMonthlyReport(@RequestParam("year") int year,
+            @RequestParam("month") int month) {
         int rowsAffected = monthlyReportRepository.delete(year, month);
         if (rowsAffected > 0) {
             return ResponseEntity.ok("Monthly Report deleted successfully.");
@@ -83,5 +85,5 @@ public class MonthlyReportController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Monthly Report not found");
         }
     }
-    
+
 }

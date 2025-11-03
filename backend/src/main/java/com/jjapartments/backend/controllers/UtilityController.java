@@ -1,6 +1,5 @@
 package com.jjapartments.backend.controllers;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/utilities")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UtilityController {
 
     @Autowired
@@ -22,11 +20,11 @@ public class UtilityController {
 
     // Create
     @PostMapping("/add")
-    public ResponseEntity<?> addUtility(@RequestBody Utility utility) {        
+    public ResponseEntity<?> addUtility(@RequestBody Utility utility) {
         try { // returns 201 created
             Utility newUtility = utilityRepository.add(utility);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUtility);
-        } catch(ErrorException e) { // returns 400 bad request
+        } catch (ErrorException e) { // returns 400 bad request
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
@@ -48,7 +46,7 @@ public class UtilityController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utility record not found");
         }
     }
-    
+
     // Update
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateUtility(@PathVariable int id, @RequestBody Utility utility) {
@@ -75,10 +73,10 @@ public class UtilityController {
 
     // Find by year and month
     @GetMapping("/{id}/{year}/{month}")
-    public ResponseEntity<Float> findByYearAndMonth(@PathVariable int id, @PathVariable int year, @PathVariable int month) {
+    public ResponseEntity<Float> findByYearAndMonth(@PathVariable int id, @PathVariable int year,
+            @PathVariable int month) {
         float utilities = utilityRepository.getMonthlyAmountByUnitId(id, year, month);
         return ResponseEntity.ok(utilities);
     }
-
 
 }

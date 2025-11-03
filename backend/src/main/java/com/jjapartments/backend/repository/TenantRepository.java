@@ -23,6 +23,12 @@ public class TenantRepository{
         return jdbcTemplate.query(sql, new TenantRowMapper());
     }
 
+    @Transactional(readOnly = true)
+    public List<Tenant> findByUnitId(int unitId) {
+        String sql = "SELECT * FROM tenants WHERE units_id = ?";
+        return jdbcTemplate.query(sql, new TenantRowMapper(), unitId);
+    }
+
     // Method to update unit occupant count based on actual tenant count
     private void updateUnitOccupantCount(int unitId) {
         String countSql = "SELECT COUNT(*) FROM tenants WHERE units_id = ?";
@@ -76,8 +82,8 @@ public class TenantRepository{
 
             }
         }
-        String sql = "INSERT INTO tenants(last_name, first_name, middle_initial, email, phone_number, units_id) VALUES (?, ?, ?, ?, ?, ?)"; 
-        jdbcTemplate.update(sql, tenant.getLastName(), tenant.getFirstName(), tenant.getMiddleInitial(), tenant.getEmail(), tenant.getPhoneNumber(), tenant.getUnitId());
+        String sql = "INSERT INTO tenants(last_name, first_name, middle_initial, email, phone_number, units_id, move_in_date, move_out_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"; 
+        jdbcTemplate.update(sql, tenant.getLastName(), tenant.getFirstName(), tenant.getMiddleInitial(), tenant.getEmail(), tenant.getPhoneNumber(), tenant.getUnitId(), tenant.getMoveInDate(), tenant.getMoveOutDate());
       
         // Update unit occupant count after adding tenant
         updateUnitOccupantCount(tenant.getUnitId());
@@ -90,6 +96,8 @@ public class TenantRepository{
             AND email = ?
             AND phone_number = ?
             AND units_id = ?
+            AND move_in_date = ?
+            AND move_out_date = ?
             ORDER BY id DESC
             LIMIT 1
         """;
@@ -102,7 +110,9 @@ public class TenantRepository{
             tenant.getMiddleInitial(),
             tenant.getEmail(),
             tenant.getPhoneNumber(),
-            tenant.getUnitId()
+            tenant.getUnitId(),
+            tenant.getMoveInDate(),
+            tenant.getMoveOutDate()
         );
     }
 
@@ -148,8 +158,8 @@ public class TenantRepository{
 
             }
         }
-        String sql = "UPDATE tenants SET last_name = ?, first_name = ?, middle_initial = ?, email = ?, phone_number = ?, units_id = ? WHERE id = ?";
-        int result = jdbcTemplate.update(sql, tenant.getLastName(), tenant.getFirstName(), tenant.getMiddleInitial(), tenant.getEmail(), tenant.getPhoneNumber(), tenant.getUnitId(), id);
+        String sql = "UPDATE tenants SET last_name = ?, first_name = ?, middle_initial = ?, email = ?, phone_number = ?, units_id = ?, move_in_date = ?, move_out_date = ? WHERE id = ?";
+        int result = jdbcTemplate.update(sql, tenant.getLastName(), tenant.getFirstName(), tenant.getMiddleInitial(), tenant.getEmail(), tenant.getPhoneNumber(), tenant.getUnitId() tenant.getMoveInDate(), tenant.getMoveOutDate(), id);
         
         // Update occupant counts for both old and new units if tenant moved
         if (result > 0) {

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "./ui/select";
+import { ErrorModal } from "./error-modal";
+
 export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, units }) {
     const [formData, setFormData] = useState({
         firstName: '',
@@ -9,6 +11,9 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
         phoneNumber: '',
         unitId: ''
     });
+
+    const [errorModalOpen, setErrorModalOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Populate form with editing data when editing
     useEffect(() => {
@@ -45,11 +50,41 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-    
-    const handleSubmit = () => {
-        onSubmit(formData);
+
+    // Special handler for middle initial
+    const handleMiddleInitialChange = (e) => {
+        let value = e.target.value.toUpperCase(); // uppercase
+        if (value.length > 1) value = value.charAt(0); // keep only first letter
+        setFormData({ ...formData, middleName: value });
     };
     
+    const handleSubmit = () => {
+        const missingFields: string[] = [];
+        if (!formData.firstName) missingFields.push("First Name");
+        if (!formData.lastName) missingFields.push("Last Name");
+        if (!formData.email) missingFields.push("Email");
+        if (!formData.phoneNumber) missingFields.push("Cellphone Number");
+        if (!formData.unitId) missingFields.push("Unit");
+
+        if (missingFields.length > 0) {
+            setErrorMessage(
+                `Please fill in the following required field${missingFields.length > 1 ? "s" : ""}: ${missingFields.join(", ")}.`
+            );
+            setErrorModalOpen(true);
+            return;
+        }
+
+        // Simple email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setErrorMessage("Please enter a valid email address.");
+            setErrorModalOpen(true);
+            return;
+        }
+
+        onSubmit(formData);
+    };
+
     return (
         <div className="p-8 bg-white max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
@@ -73,7 +108,7 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            First Name *
+                            First Name <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -81,27 +116,28 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
                             value={formData.firstName}
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                            placeholder="Enter first name"
+                            placeholder="e.g., Juan"
                         />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Middle Name
+                            Middle Initial
                         </label>
                         <input
                             type="text"
                             name="middleName"
                             value={formData.middleName}
-                            onChange={handleInputChange}
+                            onChange={handleMiddleInitialChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                            placeholder="Enter middle name"
+                            placeholder="e.g., A"
+                            maxLength={1}
                         />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Last Name *
+                            Last Name <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
@@ -109,7 +145,7 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
                             value={formData.lastName}
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                            placeholder="Enter last name"
+                            placeholder="e.g., De La Cruz"
                         />
                     </div>
                 </div>
@@ -117,7 +153,7 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email *
+                            Email <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="email"
@@ -131,7 +167,7 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Cellphone Number *
+                            Cellphone Number <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="tel"
@@ -149,13 +185,11 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Unit *
+                            Unit <span className="text-red-500">*</span>
                         </label>
                         <Select
                             value={formData.unitId}
-                            onValueChange={(value) =>
-                                setFormData({ ...formData, unitId: value })
-                            }
+                            onValueChange={(value) => setFormData({ ...formData, unitId: value })}
                         >
                             <SelectTrigger className="w-full min-h-12 rounded-md border px-4 py-3 text-left">
                                 <SelectValue placeholder="Select Unit" />
@@ -188,6 +222,16 @@ export function TenantMgt({ toggleModal, onSubmit, editingTenant, isEditing, uni
                     {isEditing ? 'Update Tenant' : 'Add Tenant'}
                 </button>
             </div>
+
+            <ErrorModal
+                open={errorModalOpen}
+                title="Form Error"
+                message={errorMessage}
+                onClose={() => {
+                    setErrorModalOpen(false);
+                    setErrorMessage("");
+                }}
+            />
         </div>
     );
 }

@@ -1,8 +1,3 @@
--- Create and use database
-CREATE SCHEMA IF NOT EXISTS `jj_apartments` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE `jj_apartments` ;
-
-
 -- Disable checks temporarily (for safe table creation with foreign keys)
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
@@ -23,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- -----------------------------------------------------
 -- Table: units
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `jj_apartments`.`units` (
+CREATE TABLE IF NOT EXISTS `units` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `unit_number` VARCHAR(1) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
@@ -60,7 +55,7 @@ VALUES
 -- -------------------------
 -- Table: tenants
 -- -------------------------
-CREATE TABLE IF NOT EXISTS `jj_apartments`.`tenants` (
+CREATE TABLE IF NOT EXISTS `tenants` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `last_name` VARCHAR(45) NOT NULL,
   `first_name` VARCHAR(45) NOT NULL,
@@ -76,11 +71,11 @@ CREATE TABLE IF NOT EXISTS `jj_apartments`.`tenants` (
   INDEX `fk_tenants_units1_idx` (`units_id` ASC) VISIBLE,
   CONSTRAINT `fk_tenants_units1`
     FOREIGN KEY (`units_id`)
-    REFERENCES `jj_apartments`.`units` (`id`)
+    REFERENCES `units` (`id`)
     ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-INSERT INTO `jj_apartments`.`tenants` 
+INSERT INTO `tenants` 
 (`last_name`, `first_name`, `middle_initial`, `email`, `phone_number`, `units_id`) 
 VALUES
 ('Dela Cruz', 'Juan', 'R', 'juan.delacruz@example.com', '09171234567', 1),
@@ -95,11 +90,11 @@ VALUES
 ('Ramos', 'Patricia', 'E', 'patricia.ramos@example.com', '09261234567', 19);
 
 -- Foreign key constraint to units table
-ALTER TABLE `jj_apartments`.`units`
+ALTER TABLE `units`
   ADD INDEX `fk_units_active_tenant_idx` (`active_tenant_id` ASC),
   ADD CONSTRAINT `fk_units_active_tenant`
     FOREIGN KEY (`active_tenant_id`)
-    REFERENCES `jj_apartments`.`tenants` (`id`)
+    REFERENCES `tenants` (`id`)
     ON DELETE SET NULL;
 
 -- Update units to link active tenants 
@@ -117,10 +112,11 @@ UPDATE units SET active_tenant_id = 10 WHERE id = 19; -- Patricia in Unit S
 SELECT * FROM units;
 SELECT * FROM tenants;
 
+
 -- -----------------------------------------------------
--- Table `jj_apartments`.`sub_tenants`
+-- Table `sub_tenants`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `jj_apartments`.`sub_tenants` (
+CREATE TABLE IF NOT EXISTS `sub_tenants` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `last_name` VARCHAR(45) NOT NULL,
   `first_name` VARCHAR(45) NOT NULL,
@@ -134,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `jj_apartments`.`sub_tenants` (
   UNIQUE INDEX `messenger_link_UNIQUE` (`messenger_link` ASC) VISIBLE,
   CONSTRAINT `main_tenant_id`
     FOREIGN KEY (`main_tenant_id`)
-    REFERENCES `jj_apartments`.`tenants` (`id`)
+    REFERENCES `tenants` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -230,7 +226,7 @@ CREATE TABLE IF NOT EXISTS expenses (
   INDEX `fk_expenses_units1_idx` (`units_id` ASC) VISIBLE,
   CONSTRAINT `fk_expenses_units1`
     FOREIGN KEY (`units_id`)
-    REFERENCES `jj_apartments`.`units` (`id`)
+    REFERENCES `units` (`id`)
     ON DELETE SET NULL
 ) ENGINE = InnoDB;
 

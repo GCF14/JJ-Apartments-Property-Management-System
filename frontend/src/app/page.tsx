@@ -141,19 +141,19 @@ export default function Home() {
         setError(null);
         
         const [monthlyResponse, tenantsResponse, unitsResponse, paymentsResponse, utilitiesResponse, expensesResponse] = await Promise.all([
-          fetch('/api/monthlyreports', {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/monthlyreports`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
             },
           }),
-          fetch('/api/tenants', {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tenants`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
             },
           }),
-          fetch('/api/units', {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/units`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export default function Home() {
               'Content-Type': 'application/json',
             },
           }),
-          fetch('/api/utilities', {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/utilities`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

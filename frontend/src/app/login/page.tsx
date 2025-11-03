@@ -79,7 +79,7 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/users/login', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,19 +89,24 @@ export default function LoginPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        let errorMessage = errorData.error || 'Failed to login';
-        
-        // Map specific backend errors to user-friendly messages
-        if (response.status === 404 || errorMessage.includes('not found') || errorMessage.includes('Account not found')) {
-          errorMessage = 'Account does not exist. Please check your username or create a new account.';
-        } else if (errorMessage.includes('Invalid password') || errorMessage.includes('password')) {
-          errorMessage = 'Incorrect password. Please try again.';
-        } else if (response.status === 401) {
-          errorMessage = 'Invalid credentials. Please check your username and password.';
-        } else if (response.status >= 500) {
-          errorMessage = 'Server error. Please try again later.';
+        let errorMessage = 'Failed to login';
+
+        switch (errorData.error) {
+          case 'ACCOUNT_NOT_FOUND':
+            errorMessage = 'Account does not exist. Please check your username or create a new account.';
+            break;
+          case 'INVALID_PASSWORD':
+            errorMessage = 'Incorrect password. Please try again.';
+            break;
+          default:
+            if (response.status === 401) {
+              errorMessage = 'Invalid credentials. Please check your username and password.';
+            } else if (response.status >= 500) {
+              errorMessage = 'Server error. Please try again later.';
+            }
+            break;
         }
-        
+
         throw new Error(errorMessage);
       }
 

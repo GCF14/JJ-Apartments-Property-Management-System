@@ -12,10 +12,8 @@ import com.jjapartments.backend.models.Expense;
 import com.jjapartments.backend.exception.ErrorException;
 import com.jjapartments.backend.repository.ExpenseRepository;
 
-
 @RestController
 @RequestMapping("/api/expenses")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ExpenseController {
 
     @Autowired
@@ -49,7 +47,7 @@ public class ExpenseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Expense not found");
         }
     }
-    
+
     // Update
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateExpense(@PathVariable int id, @RequestBody Expense expense) {
@@ -63,7 +61,8 @@ public class ExpenseController {
 
     // Find by year and month
     @GetMapping("/{id}/{year}/{month}")
-    public ResponseEntity<Float> findByYearAndMonth(@PathVariable int id, @PathVariable int year, @PathVariable int month) {
+    public ResponseEntity<Float> findByYearAndMonth(@PathVariable int id, @PathVariable int year,
+            @PathVariable int month) {
         float amount = expenseRepository.getMonthlyAmountById(id, year, month);
         return ResponseEntity.ok(amount);
     }

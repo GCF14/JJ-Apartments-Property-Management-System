@@ -30,7 +30,7 @@ export type Unit = {
   description: string,
   price: string,
   numOccupants: number,
-  contactNumber: string
+  contactNumber?: string
 }
 
 export default function ExpensesList() {

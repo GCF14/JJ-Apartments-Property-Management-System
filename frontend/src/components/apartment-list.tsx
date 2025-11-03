@@ -11,7 +11,7 @@ export type Unit = {
   name: string,
   description: string,
   numOccupants: number,
-  contactNumber: string,
+  contactNumber?: string,
   price: number
 }
 
@@ -218,8 +218,13 @@ export function ApartmentList() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-gray-900">{apartment.unitNumber}</span>
-                      <span className={`px-2 py-1 text-xs rounded-full bg-green-100 text-green-800`}>
-                        {apartment.contactNumber}
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        apartment.contactNumber 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {/* TODO: This will be joined from tenants table in the future */}
+                        {apartment.contactNumber || "No tenant"}
                       </span>
                     </div>
                   </td>

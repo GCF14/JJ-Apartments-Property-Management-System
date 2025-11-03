@@ -14,8 +14,7 @@ import com.jjapartments.backend.repository.RateRepository;
 
 @RestController
 @RequestMapping("/api/rates")
-@CrossOrigin(origins = "http://localhost:3000")
-public class RateController{
+public class RateController {
     @Autowired
     private RateRepository rateRepository;
 
@@ -25,7 +24,7 @@ public class RateController{
         try {
             Rate newRate = rateRepository.add(rate);
             return ResponseEntity.status(HttpStatus.CREATED).body(newRate);
-        } catch (ErrorException e) {    
+        } catch (ErrorException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
@@ -61,7 +60,7 @@ public class RateController{
 
     @GetMapping("/latest/type")
     public ResponseEntity<?> getLatestByType(@RequestParam String type) {
-         try {
+        try {
             Rate rates = rateRepository.findLatestByType(type);
             return ResponseEntity.ok(rates);
         } catch (ErrorException e) {
@@ -71,12 +70,12 @@ public class RateController{
 
     @GetMapping("/type")
     public ResponseEntity<?> getByType(@RequestParam String type) {
-         try {
+        try {
             List<Rate> rates = rateRepository.findByType(type);
             return ResponseEntity.ok(rates);
         } catch (ErrorException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-    
+
 }

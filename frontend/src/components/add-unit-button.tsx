@@ -17,7 +17,6 @@ export default function AddUnitButton() {
     const [unitNumber, setUnitNumber] = useState<string>("");
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
-    const [contactNumber, setContactNumber] = useState<string>("");
     const [numOccupants, setNumOccupants] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [errorModalOpen, setErrorModalOpen] = useState(false);
@@ -40,15 +39,15 @@ export default function AddUnitButton() {
             return;
         }
 
-        if (!contactNumber.trim() || !price.trim() || !numOccupants.trim()) {
-            setErrorMessage('Contact Number, Price, and Number of Occupants are required fields.');
+        if (!price.trim() || !numOccupants.trim()) {
+            setErrorMessage('Price and Max Number of Occupants are required fields.');
             setErrorModalOpen(true);
             return;
         }
 
         // Validate that numeric fields are actually numbers
-        if (isNaN(Number(contactNumber)) || isNaN(Number(price)) || isNaN(Number(numOccupants))) {
-            setErrorMessage('Contact Number, Price, and Number of Occupants must be valid numbers.');
+        if (isNaN(Number(price)) || isNaN(Number(numOccupants))) {
+            setErrorMessage('Price and Max Number of Occupants must be valid numbers.');
             setErrorModalOpen(true);
             return;
         }
@@ -58,8 +57,7 @@ export default function AddUnitButton() {
             name: name.trim(),
             description: description.trim(),
             price,
-            numOccupants: Number(numOccupants),
-            contactNumber: Number(contactNumber)
+            numOccupants: Number(numOccupants)
         }
 
         try {
@@ -112,7 +110,6 @@ export default function AddUnitButton() {
         setUnitNumber("");
         setName("");
         setDescription("");
-        setContactNumber("");
         setNumOccupants("");
         setPrice("");
     };
@@ -165,19 +162,10 @@ export default function AddUnitButton() {
                             onChange={(e) => setDescription(e.target.value)}
                             />
                     </div>
-                    <div>
-                        <Label className="py-1">Contact Number <span className="text-red-500">*</span></Label>
-                            <Input
-                            type="text"
-                            placeholder="09123456789"
-                            value={contactNumber}
-                            onChange={(e) => setContactNumber(e.target.value)}
-                            />
-                    </div>
                     
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <Label className="py-1">Number of Occupants <span className="text-red-500">*</span></Label>
+                            <Label className="py-1">Max Number of Occupants <span className="text-red-500">*</span></Label>
                             <Input
                                 type="number"
                                 placeholder="2"

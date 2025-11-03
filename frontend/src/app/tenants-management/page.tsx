@@ -332,10 +332,9 @@ export default function TenantsManagementPage() {
     };
 
     const formatName = (firstName: string, lastName: string, middleName?: string) => {
-        const middle = middleName ? ` ${middleName}` : '';
+        const middle = middleName ? ` ${middleName}.` : '';
         return `${firstName}${middle} ${lastName}`;
     };
-
 
     const getUnitInfo = (unitId: number) => {
         const unit = units.find(u => u.id === unitId);
